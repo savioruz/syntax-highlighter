@@ -7,6 +7,8 @@
     import { Input } from "$lib/components/ui/input/index.js";
     import { Label } from "$lib/components/ui/label/index.js";
     import { Checkbox } from "$lib/components/ui/checkbox/index.js";
+    import * as Kbd from "$lib/components/ui/kbd/index.js";
+    import { Github } from "lucide-svelte";
 	import { useKeyboardShortcuts } from '$lib/hooks/useKeyboardShortcuts.svelte';
 	import { useSyncScroll } from '$lib/hooks/useSyncScroll.svelte';
 	import { useCopyToClipboard } from '$lib/hooks/useCopyToClipboard.svelte';
@@ -72,6 +74,12 @@
 </script>
 
 <div class="container mx-auto max-w-5xl p-4 md:p-8">
+    <h1 class="text-2xl md:text-3xl font-bold text-center">Syntax Highlighter</h1>
+    <h4 class="text-sm md:text-base text-center text-muted-foreground mb-8">
+        Inspired from <a href="https://shiki.matsu.io/" target="_blank" rel="noopener noreferrer" class="underline">Shiki</a>
+        , this site is able highlight your code snippets as you type then you just paste into Word with effortless.
+    </h4>
+
 	<div class="mb-4 md:mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 md:gap-0">
 		<div class="flex flex-wrap items-center gap-4">
             <NativeSelect.Root bind:value={language}>
@@ -157,6 +165,36 @@
 			autocapitalize="off"
 		></textarea>
 	</div>
+
+    <div class="my-8">
+        <h3 class="text-sm font-semibold mb-3">Keyboard Shortcuts</h3>
+        <ul class="space-y-2 text-sm text-muted-foreground">
+            <li class="flex items-center gap-2">
+                <Kbd.Group>
+                    <Kbd.Root>⌘</Kbd.Root>/<Kbd.Root>Ctrl</Kbd.Root> + <Kbd.Root>C</Kbd.Root>
+                </Kbd.Group>
+                <span>Copy the highlighted code to clipboard</span>
+            </li>
+            <li class="flex items-center gap-2">
+                <Kbd.Group>
+                    <Kbd.Root>⌘</Kbd.Root>/<Kbd.Root>Ctrl</Kbd.Root> + <Kbd.Root>V</Kbd.Root>
+                </Kbd.Group>
+                <span>Paste code from clipboard</span>
+            </li>
+            <li class="flex items-center gap-2">
+                <Kbd.Group>
+                    <Kbd.Root>⌘</Kbd.Root>/<Kbd.Root>Ctrl</Kbd.Root> + <Kbd.Root>D</Kbd.Root>
+                </Kbd.Group>
+                <span>Clear the editor</span>
+            </li>
+        </ul>
+    </div>
+
+    <footer class="text-center text-xs text-muted-foreground">
+        <Button variant="outline" href="https://github.com/savioruz/syntax-highlighter" target="_blank" rel="noopener noreferrer">
+            <Github /> View on GitHub
+        </Button>
+    </footer>
 </div>
 
 <style>
