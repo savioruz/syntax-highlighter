@@ -24,6 +24,8 @@
 	let highlightedHtml = $state('');
 	let textareaElement: HTMLTextAreaElement;
 
+    const kbdKey = /Mac/.test(navigator.platform) ? '⌘' : 'Ctrl';
+
 	const copyToClipboard = useCopyToClipboard();
 	const syncScroll = useSyncScroll(() => textareaElement, () => editorElement);
 
@@ -171,19 +173,19 @@
         <ul class="space-y-2 text-sm text-muted-foreground">
             <li class="flex items-center gap-2">
                 <Kbd.Group>
-                    <Kbd.Root>⌘</Kbd.Root>/<Kbd.Root>Ctrl</Kbd.Root> + <Kbd.Root>C</Kbd.Root>
+                    <Kbd.Root>{kbdKey}</Kbd.Root> + <Kbd.Root>C</Kbd.Root>
                 </Kbd.Group>
                 <span>Copy the highlighted code to clipboard</span>
             </li>
             <li class="flex items-center gap-2">
                 <Kbd.Group>
-                    <Kbd.Root>⌘</Kbd.Root>/<Kbd.Root>Ctrl</Kbd.Root> + <Kbd.Root>V</Kbd.Root>
+                    <Kbd.Root>{kbdKey}</Kbd.Root> + <Kbd.Root>V</Kbd.Root>
                 </Kbd.Group>
                 <span>Paste code from clipboard</span>
             </li>
             <li class="flex items-center gap-2">
                 <Kbd.Group>
-                    <Kbd.Root>⌘</Kbd.Root>/<Kbd.Root>Ctrl</Kbd.Root> + <Kbd.Root>D</Kbd.Root>
+                    <Kbd.Root>{kbdKey}</Kbd.Root> + <Kbd.Root>D</Kbd.Root>
                 </Kbd.Group>
                 <span>Clear the editor</span>
             </li>
