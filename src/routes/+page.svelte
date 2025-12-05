@@ -78,8 +78,8 @@
 <div class="container mx-auto max-w-5xl p-4 md:p-8">
     <h1 class="text-2xl md:text-3xl font-bold text-center">Syntax Highlighter</h1>
     <h4 class="text-sm md:text-base text-center text-muted-foreground mb-8">
-        Inspired from <a href="https://shiki.matsu.io/" target="_blank" rel="noopener noreferrer" class="underline">Shiki</a>
-        , this site is able highlight your code snippets as you type then you just paste into Word with effortless.
+        Inspired from <a href="https://shiki.matsu.io/" target="_blank" rel="noopener noreferrer" class="underline">Shiki,</a>
+        effortless syntax highlighting for your code snippets.
     </h4>
 
 	<div class="mb-4 md:mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 md:gap-0">
