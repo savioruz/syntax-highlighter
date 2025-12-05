@@ -1,5 +1,12 @@
 <script lang="ts">
 	import { codeToHtml } from 'shiki';
+    import { languages } from '$lib/languages';
+    import { themes } from '$lib/themes';
+	import { Button } from "$lib/components/ui/button/index.js";
+    import * as NativeSelect from "$lib/components/ui/native-select/index.js";
+    import { Input } from "$lib/components/ui/input/index.js";
+    import { Label } from "$lib/components/ui/label/index.js";
+	import { toast } from 'svelte-sonner';
 
 	let code = $state('# Enter your code here\nprint("Hello, World!")');
 	let language = $state('python');
@@ -8,37 +15,6 @@
 	let lineHeight = $state(1.0);
 	let showLineNumbers = $state(false);
 	let editorElement: HTMLDivElement;
-
-	const languages = [
-        { value: 'python', label: 'Python' },
-		{ value: 'javascript', label: 'JavaScript' },
-		{ value: 'typescript', label: 'TypeScript' },
-		{ value: 'java', label: 'Java' },
-		{ value: 'cpp', label: 'C++' },
-		{ value: 'html', label: 'HTML' },
-		{ value: 'css', label: 'CSS' },
-		{ value: 'json', label: 'JSON' },
-		{ value: 'rust', label: 'Rust' },
-		{ value: 'go', label: 'Go' },
-		{ value: 'sql', label: 'SQL' },
-		{ value: 'php', label: 'PHP' },
-		{ value: 'ruby', label: 'Ruby' },
-		{ value: 'csharp', label: 'C#' },
-		{ value: 'kotlin', label: 'Kotlin' },
-		{ value: 'swift', label: 'Swift' },
-		{ value: 'shellscript', label: 'Shell Script' },
-		{ value: 'yaml', label: 'YAML' },
-		{ value: 'zig', label: 'Zig' }
-	];
-
-	const themes = [
-		{ value: 'github-light', label: 'GitHub Light' },
-		{ value: 'min-light', label: 'Min Light' },
-		{ value: 'slack-ochin', label: 'Slack Ochin' },
-		{ value: 'vitesse-light', label: 'Vitesse Light' },
-		{ value: 'catppuccin-latte', label: 'Catppuccin Latte' },
-		{ value: 'rose-pine-dawn', label: 'Rose Pine Dawn' }
-	];
 
 	let highlightedHtml = $state('');
 	let textareaElement: HTMLTextAreaElement;
@@ -109,8 +85,10 @@
 					'text/plain': textBlob
 				})
 			]);
+
+            toast.success('Code copied to clipboard!');
 		} catch (error) {
-			console.error('Failed to copy:', error);
+            toast.error('Failed to copy code to clipboard.');
 			try {
 				await navigator.clipboard.writeText(code);
 			} catch (e) {
@@ -124,79 +102,73 @@
 	}
 </script>
 
-<div class="container mx-auto max-w-5xl p-8">
-	<!-- Header with controls -->
-	<div class="mb-6 flex items-center justify-between">
-		<div class="flex items-center gap-3">
-			<select
-				id="language"
-				bind:value={language}
-				class="h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-			>
-				{#each languages as lang (lang.value)}
-					<option value={lang.value}>{lang.label}</option>
-				{/each}
-			</select>
+<div class="container mx-auto max-w-5xl p-4 md:p-8">
+	<div class="mb-4 md:mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 md:gap-0">
+		<div class="flex flex-wrap items-center gap-4">
+            <NativeSelect.Root bind:value={language}>
+                {#each languages as lang (lang.value)}
+                    <NativeSelect.Option value={lang.value}>{lang.label}</NativeSelect.Option>
+                {/each}
+            </NativeSelect.Root>
 
-			<select
-				id="theme"
-				bind:value={theme}
-				class="h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-			>
-				{#each themes as themeOption (themeOption.value)}
-					<option value={themeOption.value}>{themeOption.label}</option>
-				{/each}
-			</select>
+            <NativeSelect.Root bind:value={theme}>
+                {#each themes as themeOption (themeOption.value)}
+                    <NativeSelect.Option value={themeOption.value}>{themeOption.label}</NativeSelect.Option>
+                {/each}
+            </NativeSelect.Root>
 		</div>
 
-		<div class="flex items-center gap-3">
-			<div class="flex items-center gap-2">
-				<label for="fontSize" class="text-sm text-muted-foreground">Size:</label>
-				<input
+		<div class="flex flex-wrap items-center gap-4">
+			<div class="flex items-center gap-1 md:gap-2">
+				<Label for="fontSize" class="text-xs md:text-sm text-muted-foreground whitespace-nowrap">Size:</Label>
+				<Input
 					id="fontSize"
 					type="number"
 					bind:value={fontSize}
 					min="8"
-					max="24"
-					class="h-9 w-16 rounded-md border border-input bg-background px-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+					max="32"
+					class="w-16"
 				/>
 			</div>
 
-			<div class="flex items-center gap-2">
-				<label for="lineHeight" class="text-sm text-muted-foreground">Line:</label>
-				<input
+			<div class="flex items-center gap-1 md:gap-2">
+				<Label for="lineHeight" class="text-xs md:text-sm text-muted-foreground whitespace-nowrap">Line:</Label>
+				<Input
 					id="lineHeight"
 					type="number"
 					bind:value={lineHeight}
 					min="0.8"
 					max="2.5"
 					step="0.1"
-					class="h-9 w-16 rounded-md border border-input bg-background px-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+					class="w-16"
 				/>
 			</div>
-
-			<label class="flex items-center gap-2 cursor-pointer">
+			<Label class="flex items-center gap-1 md:gap-2 cursor-pointer">
 				<input type="checkbox" bind:checked={showLineNumbers} class="h-4 w-4" />
-				<span class="text-sm text-muted-foreground">Line Numbers</span>
-			</label>
-			<button
+				<span class="text-xs md:text-sm text-muted-foreground whitespace-nowrap">Line Numbers</span>
+			</Label>
+		</div>
+
+        <div class="flex items-center gap-4">
+            <Button
 				onclick={copyToClipboard}
-				class="h-9 rounded-md border border-input bg-background px-3 text-sm hover:bg-accent hover:text-accent-foreground"
+                variant="secondary"
+				class="text-xs md:text-sm"
 			>
 				Copy
-			</button>
-			<button
+            </Button>
+			<Button
 				onclick={clearCode}
-				class="h-9 w-9 rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground flex items-center justify-center"
+				variant="secondary"
+				class="text-xs md:text-sm px-3"
 			>
 				✕
-			</button>
-		</div>
+			</Button>
+        </div>
 	</div>
 
-	<!-- Code Editor -->
 	<div 
-		class="rounded-lg border shadow-sm relative h-[600px] overflow-hidden"
+		class="rounded-lg border shadow-sm relative h-[400px] md:h-[600px] overflow-hidden"
 		style="--editor-font-size: {fontSize}px; --editor-line-height: {lineHeight};"
 	>
 		<div
@@ -209,7 +181,7 @@
 			bind:this={textareaElement}
 			bind:value={code}
 			onscroll={syncScroll}
-			placeholder="// Enter your code here..."
+			placeholder=""
 			class="absolute inset-0 w-full h-full resize-none overflow-auto bg-transparent font-mono text-transparent focus:outline-none z-1 pb-96"
 			spellcheck="false"
 			autocomplete="off"
@@ -224,7 +196,7 @@
 		padding: 10px !important;
 		min-height: 4em;
 		white-space: pre;
-		font-family: 'Fira Code', 'Courier New', monospace;
+		font-family: 'Courier New', monospace;
 		box-sizing: border-box;
 		font-size: 14px;
 		line-height: 1.5;
