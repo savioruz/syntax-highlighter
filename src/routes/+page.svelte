@@ -6,9 +6,12 @@
     import * as NativeSelect from "$lib/components/ui/native-select/index.js";
     import { Input } from "$lib/components/ui/input/index.js";
     import { Label } from "$lib/components/ui/label/index.js";
-	import { toast } from 'svelte-sonner';
+    import { Checkbox } from "$lib/components/ui/checkbox/index.js";
+	import { useKeyboardShortcuts } from '$lib/hooks/useKeyboardShortcuts.svelte';
+	import { useSyncScroll } from '$lib/hooks/useSyncScroll.svelte';
+	import { useCopyToClipboard } from '$lib/hooks/useCopyToClipboard.svelte';
 
-	let code = $state('# Enter your code here\nprint("Hello, World!")');
+	let code = $state('#Type your code here\nprint("Hello, World!")\n');
 	let language = $state('python');
 	let theme = $state('github-light');
 	let fontSize = $state(10);
@@ -18,6 +21,25 @@
 
 	let highlightedHtml = $state('');
 	let textareaElement: HTMLTextAreaElement;
+
+	const copyToClipboard = useCopyToClipboard();
+	const syncScroll = useSyncScroll(() => textareaElement, () => editorElement);
+
+	useKeyboardShortcuts({
+		getTextareaElement: () => textareaElement,
+		getCode: () => code,
+		onCodeChange: (newCode) => {
+			code = newCode;
+		},
+		onCopy: () => copyToClipboard({
+			highlightedHtml,
+			code,
+			fontSize,
+			lineHeight,
+			showLineNumbers
+		}),
+		onClear: clearCode
+	});
 
 	$effect(() => {
 		let cancelled = false;
@@ -43,59 +65,6 @@
 			cancelled = true;
 		};
 	});
-
-	function syncScroll() {
-		if (textareaElement && editorElement) {
-			editorElement.scrollTop = textareaElement.scrollTop;
-			editorElement.scrollLeft = textareaElement.scrollLeft;
-		}
-	}
-
-	async function copyToClipboard() {
-		try {
-			let styledHtml = highlightedHtml.replace(
-				'<pre class="shiki"',
-				`<pre class="shiki" style="font-family: 'Courier New', monospace; font-size: ${fontSize}px; line-height: ${lineHeight};"`
-			);
-
-			if (showLineNumbers) {
-				const lines = code.split('\n');
-				const codeContent = styledHtml.match(/<code[^>]*>([\s\S]*?)<\/code>/)?.[1] || '';
-				const lineElements = codeContent.split('\n');
-				
-				const numberedLines = lineElements.map((line, index) => {
-					if (index < lines.length) {
-						return `${index + 1}. ${line}`;
-					}
-					return line;
-				}).join('\n');
-				
-				styledHtml = styledHtml.replace(
-					/<code[^>]*>[\s\S]*?<\/code>/,
-					`<code>${numberedLines}</code>`
-				);
-			}
-			
-			const blob = new Blob([styledHtml], { type: 'text/html' });
-			const textBlob = new Blob([code], { type: 'text/plain' });
-			
-			await navigator.clipboard.write([
-				new ClipboardItem({
-					'text/html': blob,
-					'text/plain': textBlob
-				})
-			]);
-
-            toast.success('Code copied to clipboard!');
-		} catch (error) {
-            toast.error('Failed to copy code to clipboard.');
-			try {
-				await navigator.clipboard.writeText(code);
-			} catch (e) {
-				console.error('Fallback copy failed:', e);
-			}
-		}
-	}
 
 	function clearCode() {
 		code = '';
@@ -144,14 +113,14 @@
 				/>
 			</div>
 			<Label class="flex items-center gap-1 md:gap-2 cursor-pointer">
-				<input type="checkbox" bind:checked={showLineNumbers} class="h-4 w-4" />
+				<Checkbox bind:checked={showLineNumbers} />
 				<span class="text-xs md:text-sm text-muted-foreground whitespace-nowrap">Line Numbers</span>
 			</Label>
 		</div>
 
         <div class="flex items-center gap-4">
             <Button
-				onclick={copyToClipboard}
+				onclick={() => copyToClipboard({ highlightedHtml, code, fontSize, lineHeight, showLineNumbers })}
                 variant="secondary"
 				class="text-xs md:text-sm"
 			>
