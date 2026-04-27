@@ -8,7 +8,7 @@
     import { Label } from "$lib/components/ui/label/index.js";
     import { Checkbox } from "$lib/components/ui/checkbox/index.js";
     import * as Kbd from "$lib/components/ui/kbd/index.js";
-    import { Github } from "lucide-svelte";
+    import { Coffee, Github } from "lucide-svelte";
 	import { useKeyboardShortcuts } from '$lib/hooks/useKeyboardShortcuts.svelte';
 	import { useSyncScroll } from '$lib/hooks/useSyncScroll.svelte';
 	import { useCopyToClipboard } from '$lib/hooks/useCopyToClipboard.svelte';
@@ -196,6 +196,9 @@
         <Button variant="outline" href="https://github.com/savioruz/syntax-highlighter" target="_blank" rel="noopener noreferrer">
             <Github /> View on GitHub
         </Button>
+		<Button variant="secondary" href="https://trakteer.id/savioruz/tip" target="_blank" rel="noopener noreferrer" class="ml-2">
+			<Coffee /> Buy me a coffee
+		</Button>
     </footer>
 </div>
 
